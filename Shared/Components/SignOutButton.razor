@@ -1,0 +1,25 @@
+﻿@inject ICookieAPIService cookieStore;
+@inject IJSRuntime JSRuntime;
+@inject INavigationServices navService
+
+<li>
+    <a class="dropdown-item" href="#" @onclick="SignOut">Sign out</a>
+</li>
+
+@code {
+    private bool isNotChatSettings;
+
+    async Task SignOut()
+    {
+        await JSRuntime.InvokeAsync<object>("Interop.StopPlay");
+        await cookieStore.DeleteAsync("Username");
+        await cookieStore.DeleteAsync("UserId");
+
+        isNotChatSettings = false;
+        navService.ToggleChatSettings(isNotChatSettings);
+
+        await JSRuntime.InvokeVoidAsync("eval", "location.reload(true)");
+
+        navManager.NavigateTo("/");
+    }
+}
